@@ -15,21 +15,20 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@master
-
-      - name: 'Terraform Init'
-        uses: hashicorp/terraform-github-actions@master
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
         with:
-          tf_actions_version: 0.12.24
-          tf_actions_subcommand: 'init'
-          tf_actions_working_dir: "./terraform"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          terraform_version: 1.1.2
 
-      - name: 'Terraform Apply'
-        uses: hashicorp/terraform-github-actions@master
+       - name: "Login via Azure CLI"
+        uses: azure/login@v1
         with:
-          tf_actions_version: 0.12.24
-          tf_actions_subcommand: 'apply'
-          tf_actions_working_dir: "./terraform"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy code
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+              terraform init && terraform apply --auto-approve
+
