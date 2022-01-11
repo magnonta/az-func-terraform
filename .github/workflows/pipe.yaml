@@ -2,7 +2,7 @@ name: 'Deploy Infra'
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   deploy-to-azure:
     name: 'Deploy to Azure'
