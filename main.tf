@@ -14,8 +14,6 @@
 
 ########## Az Function ##########
 
-data "azurerm_subscription" "primary" {}
-
 resource "azurerm_storage_account" "storageaccount" {
   # name                      = "${var.project_name}+${var.storage_account_name}+${random_integer.random.result}"
   name                      = "storagefuncteste1234"
