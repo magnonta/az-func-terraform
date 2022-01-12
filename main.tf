@@ -16,17 +16,13 @@
 
 resource "azurerm_storage_account" "storageaccount" {
   # name                      = "${var.project_name}+${var.storage_account_name}+${random_integer.random.result}"
-  name                      = "storagefuncteste123423"
+  name                      = "storagefunc1230237"
   resource_group_name       = var.resource_group_name
   location                  = var.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
   allow_blob_public_access  = false
   enable_https_traffic_only = true
-
-  network_rules {
-    default_action = "Deny"
-  }
   tags = {
     platform = "fdp"
   }
@@ -34,14 +30,28 @@ resource "azurerm_storage_account" "storageaccount" {
 
 resource "azurerm_storage_container" "storagecontainer" {
   # name                  = "${var.project_name}+${var.storage_container_name}+${random_integer.random.result}"
-  name                  = "container-func"
+  name                  = "container-func1"
   storage_account_name  = azurerm_storage_account.storageaccount.name
   container_access_type = "private"
 }
 
+resource "azurerm_storage_account_network_rules" "netrules" {
+  resource_group_name  = var.resource_group_name
+  storage_account_name = azurerm_storage_account.storageaccount.name
+
+  default_action = "Deny"
+  bypass = [
+    "AzureServices"
+  ]
+
+  depends_on = [
+    azurerm_storage_container.storagecontainer,
+  ]
+}
+
 resource "azurerm_app_service_plan" "functionplan" {
   # name                = "${var.project_name}+${var.service_plan_name}+${random_integer.random.result}"
-  name                = "plan-func-teste"
+  name                = "plan-func-teste1"
   resource_group_name = var.resource_group_name
   location            = var.location
   kind                = "FunctionApp"
@@ -66,7 +76,7 @@ resource "azurerm_app_service_plan" "functionplan" {
 resource "azurerm_function_app" "azfunction" {
 
   # name                       = "${var.project_name}+${var.function_name}+${random_integer.random.result}"
-  name                       = "func-teste1"
+  name                       = "func-teste2"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   app_service_plan_id        = azurerm_app_service_plan.functionplan.id
@@ -156,7 +166,7 @@ resource "azurerm_role_assignment" "data-contributor-role" {
 
 resource "azurerm_storage_blob" "storage_blob" {
   # name                   = "${var.project_name}+${var.blob_name}+${random_integer.random.result}"
-  name                   = "blob-func-teste"
+  name                   = "blob-func-teste1"
   storage_account_name   = azurerm_storage_account.storageaccount.name
   storage_container_name = azurerm_storage_container.storagecontainer.name
   type                   = "Block"
