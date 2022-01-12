@@ -1,22 +1,6 @@
-
-# locals {
-#   publish_code_command = "az webapp deployment source config-zip --resource-group ${var.resource_group_name} --name ${azurerm_function_app.azfunction.name} --src function-app.zip --debug"
-# }
-
-# locals {
-#   sleep_command = "sleep 60"
-# }
-
-# resource "random_integer" "random" {
-#   max = 200
-#   min = 100
-# }
-
-########## Az Function ##########
-
 resource "azurerm_storage_account" "storageaccount" {
   # name                      = "${var.project_name}+${var.storage_account_name}+${random_integer.random.result}"
-  name                      = "storagefunc1230237"
+  name                      = "storagefunc1218237"
   resource_group_name       = var.resource_group_name
   location                  = var.location
   account_tier              = "Standard"
@@ -30,7 +14,7 @@ resource "azurerm_storage_account" "storageaccount" {
 
 resource "azurerm_storage_container" "storagecontainer" {
   # name                  = "${var.project_name}+${var.storage_container_name}+${random_integer.random.result}"
-  name                  = "container-func1"
+  name                  = "container-func"
   storage_account_name  = azurerm_storage_account.storageaccount.name
   container_access_type = "private"
 }
@@ -51,7 +35,7 @@ resource "azurerm_storage_account_network_rules" "netrules" {
 
 resource "azurerm_app_service_plan" "functionplan" {
   # name                = "${var.project_name}+${var.service_plan_name}+${random_integer.random.result}"
-  name                = "plan-func-teste1"
+  name                = "plan-func-teste"
   resource_group_name = var.resource_group_name
   location            = var.location
   kind                = "FunctionApp"
@@ -76,7 +60,7 @@ resource "azurerm_app_service_plan" "functionplan" {
 resource "azurerm_function_app" "azfunction" {
 
   # name                       = "${var.project_name}+${var.function_name}+${random_integer.random.result}"
-  name                       = "func-teste2"
+  name                       = "func-teste1"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   app_service_plan_id        = azurerm_app_service_plan.functionplan.id
@@ -89,9 +73,6 @@ resource "azurerm_function_app" "azfunction" {
     FUNCTIONS_WORKER_RUNTIME = "python"
     FUNCTION_APP_EDIT_MODE   = "readonly"
     storage_name             = azurerm_storage_account.storageaccount.name
-    # HASH                           = base64encode(filesha256("./function-app.zip"))
-    # AzureStringConnection          = azurerm_storage_account.storageaccount.primary_connection_string
-    # APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.application_insights.instrumentation_key
   }
 
   site_config {
@@ -109,35 +90,6 @@ resource "azurerm_function_app" "azfunction" {
   }
 
 }
-
-# resource "null_resource" "function_app_publish" {
-
-#   provisioner "local-exec" {
-#     command = local.sleep_command
-#   }
-#   provisioner "local-exec" {
-#     command = local.publish_code_command
-#   }
-
-#   depends_on = [local.publish_code_command, local.sleep_command]
-#   triggers = {
-#     sleep_command        = local.sleep_command
-#     input_json           = "./function-app.zip"
-#     publish_code_command = local.publish_code_command
-#   }
-# }
-
-
-# resource "azurerm_application_insights" "application_insights" {
-#   name                = "${var.project_name}+${var.app_insights_name}+${random_integer.random.result}"
-#   location            = var.location
-#   resource_group_name = var.resource_group_name
-#   application_type    = "web"
-
-#   depends_on = [
-#     azurerm_app_service_plan.functionplan
-#   ]
-# }
 
 resource "azurerm_role_assignment" "storage" {
   scope                = azurerm_storage_account.storageaccount.id
@@ -158,15 +110,9 @@ resource "azurerm_role_assignment" "data-contributor-role" {
 
 }
 
-# data "archive_file" "file_function_app" {
-#   type        = "zip"
-#   source_dir  = "./function-app"
-#   output_path = "function-app.zip"
-# }
-
 resource "azurerm_storage_blob" "storage_blob" {
   # name                   = "${var.project_name}+${var.blob_name}+${random_integer.random.result}"
-  name                   = "blob-func-teste1"
+  name                   = "blob-func-teste"
   storage_account_name   = azurerm_storage_account.storageaccount.name
   storage_container_name = azurerm_storage_container.storagecontainer.name
   type                   = "Block"
