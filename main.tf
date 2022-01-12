@@ -1,6 +1,6 @@
 resource "azurerm_storage_account" "storageaccount" {
   # name                      = "${var.project_name}+${var.storage_account_name}+${random_integer.random.result}"
-  name                      = "storagefunc1218237"
+  name                      = "storagefunc1218437"
   resource_group_name       = var.resource_group_name
   location                  = var.location
   account_tier              = "Standard"
